@@ -26,6 +26,23 @@ class KuruKuruFragment : Fragment() {
     //磁気の値。こちらも配列になっている
     var magneticList = floatArrayOf()
 
+    var check_3 = false
+    var check_2 = false
+    var check_1 = false
+    var check_0 = false
+
+    var check_minus_3 = false
+    var check_minus_2 = false
+    var check_minus_1 = false
+    var check_minus_0 = false
+
+    var rotateCount = 0
+    var count = 0
+
+    var calc = 0
+
+    val list = arrayListOf<Int>()
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -99,21 +116,112 @@ class KuruKuruFragment : Fragment() {
                     }
                     */
                     if (firstPos == 0f) {
-                        firstPos = String.format("%.1f",orientationAngles[0]).toFloat()
+                        firstPos = String.format("%.1f", orientationAngles[0]).toFloat()
                     }
 
-                    if (firstPos == String.format("%.1f",orientationAngles[0]).toFloat()) {
-                        Toast.makeText(context,"一周しました",Toast.LENGTH_SHORT).show()
+                    val formatFloat = orientationAngles[0].toInt()
+
+
+/*
+                    if (formatFloat == 3) {
+                        check_3 = true
+                    }
+                    if (formatFloat == 2) {
+                        check_2 = true
+                    }
+                    if (formatFloat == 1) {
+                        check_1 = true
+                    }
+                    if (formatFloat == 0) {
+                        check_0 = true
+                    }
+                    if (formatFloat == -3) {
+                        check_minus_3 = true
+                    }
+                    if (formatFloat == -2) {
+                        check_minus_2 = true
+                    }
+                    if (formatFloat == -1) {
+                        check_minus_1 = true
+                    }
+                    if (formatFloat == -0) {
+                        check_minus_0 = true
+                    }
+*/
+
+                    // accelerometer_textview.text = "${orientationAngles[0].toInt()}"
+
+                    if (formatFloat == -2 || formatFloat == -1) {
+                        check_minus_1 = true
+                    }
+                    if (formatFloat == 2 || formatFloat == 1) {
+                        check_1 = true
+                    }
+
+                    if (formatFloat == 3 && !list.contains(3)) {
+                        list.add(3)
+                    }
+                    if (formatFloat == 2 && !list.contains(2)) {
+                        list.add(2)
+                    }
+                    if (formatFloat == 1 && !list.contains(1)) {
+                        list.add(1)
+                    }
+                    if (formatFloat == 0 && !list.contains(0)) {
+                        list.add(0)
+                    }
+                    if (formatFloat == -3 && !list.contains(-3)) {
+                        list.add(-3)
+                    }
+                    if (formatFloat == -2 && !list.contains(-2)) {
+                        list.add(-2)
+                    }
+                    if (formatFloat == -1 && !list.contains(-1)) {
+                        list.add(-1)
+                    }
+                    if (formatFloat == -0 && !list.contains(-0)) {
+                        list.add(-0)
+                    }
+                    accelerometer_textview.text = "${list}"
+
+                    println(list)
+
+                    if (list.size >= 5) {
+
+                        println("回転しました")
+                        check_3 = false
+                        check_2 = false
+                        check_1 = false
+                        check_0 = false
+                        check_minus_3 = false
+                        check_minus_2 = false
+                        check_minus_1 = false
+                        check_minus_0 = false
+
+                        list.clear()
+//
+                        count++
+                        kurukuru_count_textview.text = "$count 回"
+                        // if (count % 2 == 0) {
+                        //     rotateCount++
+                        //     kurukuru_count_textview.text = "$rotateCount 回"
+                        // }
                     }
 
                     kurukuru_fragment_textview.text = """
+                        
+                        3 $check_3
+                        2 $check_2
+                        1 $check_1
+                        0 $check_0
+                        
+                        -3 $check_minus_3
+                        -2 $check_minus_2
+                        -1 $check_minus_1
+                        -0 $check_minus_0
 
-    コンパス：${String.format("%.1f",orientationAngles[0])}
-    地面に近づけると＋の値：${orientationAngles[1]}
-    右か左へ傾けると値変わる：${orientationAngles[2]}
+                    """.trimIndent()
 
-    端末の向きは：$yokoTate
-""".trimIndent()
 
                 }
             }
@@ -122,7 +230,7 @@ class KuruKuruFragment : Fragment() {
         sensorManager.registerListener(
             sensorEventListener,
             accelerometer[0],  //配列のいっこめ。
-            SensorManager.SENSOR_DELAY_NORMAL  //更新頻度
+            SensorManager.SENSOR_DELAY_FASTEST  //更新頻度
         )
 
         //磁気センサー登録
@@ -131,6 +239,21 @@ class KuruKuruFragment : Fragment() {
             magnetic[0],  //配列のいっこめ。
             SensorManager.SENSOR_DELAY_NORMAL  //更新頻度
         )
+
+        button.setOnClickListener {
+            check_3 = false
+            check_2 = false
+            check_1 = false
+            check_0 = false
+            check_minus_3 = false
+            check_minus_2 = false
+            check_minus_1 = false
+            check_minus_0 = false
+            kurukuru_count_textview.text = "回転数"
+            count = 0
+            rotateCount = 0
+            list.clear()
+        }
 
     }
 
