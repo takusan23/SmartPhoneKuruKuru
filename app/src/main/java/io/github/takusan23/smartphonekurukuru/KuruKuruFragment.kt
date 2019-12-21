@@ -41,8 +41,6 @@ class KuruKuruFragment : Fragment() {
 
     var calc = 0
 
-    val list = arrayListOf<Int>()
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -93,36 +91,24 @@ class KuruKuruFragment : Fragment() {
                     )
                     val orientationAngles = FloatArray(3)
                     SensorManager.getOrientation(rotationMatrix, orientationAngles)
-                    //画面回転は配列の３番目の値で-1か1のときに横になる。
-                    val yokoTate = if (orientationAngles[2].roundToInt() >= 1) {
-                        "よこ"
-                    } else if (orientationAngles[2].roundToInt() <= -1) {
-                        "よこ"
-                    } else {
-                        "たて"
-                    }
-                    /*
-                    //画面回転する
-                    when (orientationAngles[2].roundToInt()) {
-                        -1 -> {
-                            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
-                        }
-                        1 -> {
-                            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
-                        }
-                        else -> {
-                            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-                        }
-                    }
-                    */
+
                     if (firstPos == 0f) {
                         firstPos = String.format("%.1f", orientationAngles[0]).toFloat()
                     }
 
                     val formatFloat = orientationAngles[0].toInt()
 
-
-/*
+                    //くそこーど
+                    /*
+                    * 端末が回転（物理）したときに通過したかどうかを
+                    * こんなふうに（くっそ雑
+                    *
+                    *       ・←通過すればtrue
+                    * 　・　📱　・
+                    *       ・
+                    * しかし全て通過したらokにすると回転開始時の角度で通過してもカウントされないので
+                    * 回転開始時の角度とその負（もしくは正）の値でチェックしている
+                    * */
                     if (formatFloat == 3) {
                         check_3 = true
                     }
@@ -147,46 +133,9 @@ class KuruKuruFragment : Fragment() {
                     if (formatFloat == -0) {
                         check_minus_0 = true
                     }
-*/
+                    accelerometer_textview.text = "${orientationAngles[0].toInt()}"
 
-                    // accelerometer_textview.text = "${orientationAngles[0].toInt()}"
-
-                    if (formatFloat == -2 || formatFloat == -1) {
-                        check_minus_1 = true
-                    }
-                    if (formatFloat == 2 || formatFloat == 1) {
-                        check_1 = true
-                    }
-
-                    if (formatFloat == 3 && !list.contains(3)) {
-                        list.add(3)
-                    }
-                    if (formatFloat == 2 && !list.contains(2)) {
-                        list.add(2)
-                    }
-                    if (formatFloat == 1 && !list.contains(1)) {
-                        list.add(1)
-                    }
-                    if (formatFloat == 0 && !list.contains(0)) {
-                        list.add(0)
-                    }
-                    if (formatFloat == -3 && !list.contains(-3)) {
-                        list.add(-3)
-                    }
-                    if (formatFloat == -2 && !list.contains(-2)) {
-                        list.add(-2)
-                    }
-                    if (formatFloat == -1 && !list.contains(-1)) {
-                        list.add(-1)
-                    }
-                    if (formatFloat == -0 && !list.contains(-0)) {
-                        list.add(-0)
-                    }
-                    accelerometer_textview.text = "${list}"
-
-                    println(list)
-
-                    if (list.size >= 5) {
+                    if (check_1 && check_minus_1) {
 
                         println("回転しました")
                         check_3 = false
@@ -198,16 +147,16 @@ class KuruKuruFragment : Fragment() {
                         check_minus_1 = false
                         check_minus_0 = false
 
-                        list.clear()
-//
+
                         count++
-                        kurukuru_count_textview.text = "$count 回"
-                        // if (count % 2 == 0) {
-                        //     rotateCount++
-                        //     kurukuru_count_textview.text = "$rotateCount 回"
-                        // }
+                        //２で割れればカウントする
+                        if (count % 2 == 0) {
+                            rotateCount++
+                            kurukuru_count_textview.text = "$rotateCount 回"
+                        }
                     }
 
+                    //
                     kurukuru_fragment_textview.text = """
                         
                         3 $check_3
@@ -237,9 +186,10 @@ class KuruKuruFragment : Fragment() {
         sensorManager.registerListener(
             sensorEventListener,
             magnetic[0],  //配列のいっこめ。
-            SensorManager.SENSOR_DELAY_NORMAL  //更新頻度
+            SensorManager.SENSOR_DELAY_FASTEST  //更新頻度
         )
 
+        //リセットボタン
         button.setOnClickListener {
             check_3 = false
             check_2 = false
@@ -252,7 +202,6 @@ class KuruKuruFragment : Fragment() {
             kurukuru_count_textview.text = "回転数"
             count = 0
             rotateCount = 0
-            list.clear()
         }
 
     }
